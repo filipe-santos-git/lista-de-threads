@@ -1,6 +1,17 @@
-/*===========================================================================
-    número de threads arbritrário, uma thread para cada pixel, thread escolhida a partir da maior dimensão da imagem
-===========================================================================*/
+/*===============================================
+ * Autores: Edivaldo Ambrósio da Silva Filho (easf), Filipe Santos Chaves (fsc5), Pablo Nunes de Oliveira (pno)
+ * Disciplina: Sistemas Operacionais
+ * Data: 13/04/26 (data de entrega)
+ *
+ * Descrição: 
+ * Questão 1 - Conversão de imagem .ppm para tons de cinza utilizando threads (pthreads).
+ * O programa lê uma imagem no formato .ppm, converte cada pixel para tons de cinza utilizando a fórmula disponibilizada, e salva a nova imagem em um arquivo .ppm de saída. Cada pixel é processado por uma thread separada, e o programa imprime os valores dos pixels processados no console.
+ * implementamos utilizando uma thread para cada pixel da imagem, pois priorizamos a rapidez na execução.
+ * 
+ *
+ * Compilação:
+ * gcc -pthread -o prog arquivo.c
+ *==============================================*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +35,7 @@ int main() {
     char tipo[3];
     int linhas, colunas, max;
     fscanf(f, "%2s", tipo);
-    fscanf(f, "%d %d", &linhas, &colunas);
+    fscanf(f, "%d %d",  &colunas, &linhas);
     fscanf(f, "%d", &max);
     //alocando memória para o vetor que recebe as informações da imagem ppm
     Pixel *img = malloc(linhas * colunas * sizeof(Pixel));
@@ -71,9 +82,10 @@ void* rotina(void* arg){
     //transformando um ponteiro de volta para o tipo pixel
     Pixel *img = (Pixel*)arg;
     //Convertendo
-    img->r = img->r * 0.30;
-    img->g = img->g * 0.59;
-    img->b = img->b * 0.11;
+    int gray = (int)(0.30 * img->r + 0.59 * img->g + 0.11 * img->b);
+    img->r = gray;
+    img->g = gray;
+    img->b = gray;
     //Printando os novos valores
     printf("Pixel processado: R=%d, G=%d, B=%d\n", img->r, img->g, img->b);
     

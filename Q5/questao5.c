@@ -1,3 +1,20 @@
+/*===============================================
+ * Autores: Edivaldo Ambrósio da Silva Filho (easf), Filipe Santos Chaves (fsc5), Pablo Nunes de Oliveira (pno)
+ * Disciplina: Sistemas Operacionais
+ * Data: 13/04/26 (data de entrega)
+ *
+ * Descrição:
+ * Questão 5 - Verificação de quadrados mágicos utilizando pthreads.
+ * 
+ * Modelo adotado:
+ * - Cada linha, coluna e diagonal é verificada por uma thread separada.
+ * - Mutex é utilizado para garantir exclusão mútua ao atualizar o status de "eh_magico".
+ * - O programa compara a soma de cada linha, coluna e diagonal com a soma da primeira linha para determinar se a matriz é um quadrado mágico.
+ *
+ * Compilação:
+ * gcc -pthread -o prog arquivo.c
+ *==============================================*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -40,7 +57,10 @@ int main() {
             linha[j] = matriz[i][j];
         }
 
-        pthread_create(&threads[i], NULL, rotina, linha);
+        if(pthread_create(&threads[i], NULL, rotina, linha) != 0){
+            perror("Erro ao criar a thread da linha");
+            return 2;
+        }
     }
 
     // Separando as colunas e enviando para rotina
@@ -51,7 +71,10 @@ int main() {
             coluna[j] = matriz[j][i];
         }
 
-        pthread_create(&threads[lado + i], NULL, rotina, coluna);
+        if(pthread_create(&threads[lado + i], NULL, rotina, coluna) != 0){
+            perror("Erro ao criar a thread da coluna");
+            return 2;
+        }
     }
 
     // Separando a diagonal principal e enviando para rotina
@@ -60,8 +83,8 @@ int main() {
         diagonal1[i] = matriz[i][i];
     }
     if(pthread_create(&threads[2 * lado], NULL, rotina, diagonal1) != 0){
-
-        return 11;
+        perror("Erro ao criar a thread da diagonal principal");
+        return 2;
     }
 
     // Separando a diagonal secundária e enviando para rotina
@@ -71,12 +94,16 @@ int main() {
     }
 
     if (pthread_create(&threads[2 * lado + 1], NULL, rotina, diagonal2) != 0){
-        return 12;
+        perror("Erro ao criar a thread da diagonal secundária");
+        return 2;
     }
 
-    // Liberando as threads
+    // garantindo a conclusão das threads
     for (int i = 0; i < (2 * lado) + 2; i++) {
-        pthread_join(threads[i], NULL);
+        if (pthread_join(threads[i], NULL) != 0) {
+            perror("Erro em join na thread");
+            return 3;
+        }
     }
 
     // Imprimindo o resultado
@@ -85,7 +112,7 @@ int main() {
     } else {
         printf("A matriz não é um quadrado mágico.\n");
     }
-
+    pthread_mutex_destroy(&mutex);
     return 0;
 }
 
