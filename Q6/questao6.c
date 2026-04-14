@@ -4,9 +4,10 @@
  * Data: 13/04/26 (data de entrega)
  *
  * Descrição:
- * Questão 6 -
+ * Questão 6 - função mergesort concorrente
  *
  * Modelo adotado:
+ * - Criação recursiva de threads para realocar cada posição do vetor concorrentemente
  *
  * Compilação:
  * gcc -pthread -o prog arquivo.c
