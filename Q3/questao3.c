@@ -4,9 +4,11 @@
  * Data: 13/04/26 (data de entrega)
  *
  * Descrição:
- * Questão 3 -
+ * Questão 3 - Implementação de um Hash Map concorrente
  *
  * Modelo adotado:
+ * - Utilizado a técnica de hashing fechado, com listas encadeadas em cada indice do hashmap
+ * - Array de mutexes implementados para cada indice do hashmap, que são ativados em todas as funções que mexem na mesma(inserir, procurar, e limpeza)
  *
  * Compilação:
  * gcc -pthread -o prog arquivo.c
@@ -71,7 +73,7 @@ void inserir(HashSet* set, int value) {
 
 // Busca segura.
 // Retorna 1 se o valor for encontrado e 0 caso contrário.
-int search(HashSet* set, int value) {
+int procurar(HashSet* set, int value) {
     int index = hash_function(value);
     int achou = 0;
 
@@ -155,13 +157,13 @@ int main() {
     // Testes de busca no conjunto
     printf("\n-BUSCANDO VALORES-\n");
 
-    if (search(&hashmap, 67)) {
+    if (procurar(&hashmap, 67)) {
         printf("O valor 67 esta no conjunto.\n");
     } else {
         printf("Erro. O valor 67 n foi encontrado.\n");
     }
 
-    if (search(&hashmap, 13)) {
+    if (procurar(&hashmap, 13)) {
         printf("O valor 13 esta no conjunto.\n");
     } else {
         printf("Erro. O valor 13 n foi encontrado.\n");
